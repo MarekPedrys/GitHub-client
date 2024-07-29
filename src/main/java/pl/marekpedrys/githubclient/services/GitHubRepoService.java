@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GitHubRepoService {
     private final GitHubFeignClient feignClient;
-    private final static int PER_PAGE = 100;
+    public final static int PER_PAGE = 100;
 
     public List<RepoResponse> getRepos(String username) {
         List<Repo> userRepos = getReposBasicInfo(username);
