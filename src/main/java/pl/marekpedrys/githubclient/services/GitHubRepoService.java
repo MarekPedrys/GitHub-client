@@ -5,21 +5,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import pl.marekpedrys.githubclient.api.exceptionhandling.ExceptionInfo;
-import pl.marekpedrys.githubclient.api.exceptionhandling.GithubClientException;
+import pl.marekpedrys.githubclient.exceptionhandling.models.ExceptionInfoTemplate;
+import pl.marekpedrys.githubclient.exceptionhandling.exceptions.GitHubClientException;
 import pl.marekpedrys.githubclient.api.models.RepoResponse;
-import pl.marekpedrys.githubclient.httpClients.feignclient.GhFeignClient;
+import pl.marekpedrys.githubclient.httpClients.feignclients.GitHubFeignClient;
 import pl.marekpedrys.githubclient.httpClients.models.Branch;
 import pl.marekpedrys.githubclient.httpClients.models.Repo;
-import pl.marekpedrys.githubclient.httpClients.models.SearchReposGhResponse;
+import pl.marekpedrys.githubclient.httpClients.models.SearchReposGitHubResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RepoService {
-    private final GhFeignClient feignClient;
+public class GitHubRepoService {
+    private final GitHubFeignClient feignClient;
     private final static int PER_PAGE = 100;
 
     public List<RepoResponse> getRepos(String username) {
@@ -33,7 +33,7 @@ public class RepoService {
 
     private List<Repo> getReposBasicInfo(String username) {
         List<Repo> userRepos = new ArrayList<>();
-        ResponseEntity<SearchReposGhResponse> ghResponse;
+        ResponseEntity<SearchReposGitHubResponse> ghResponse;
         List<Repo> ghBody;
         HttpHeaders ghHeaders;
         int page = 1;
@@ -41,9 +41,9 @@ public class RepoService {
             try {
                 ghResponse = feignClient.getRepos(username, PER_PAGE, page++);
             } catch (FeignException.NotFound e) {
-                throw new GithubClientException(ExceptionInfo.USER_NOT_FOUND, username);
+                throw new GitHubClientException(ExceptionInfoTemplate.USER_NOT_FOUND, username);
             } catch (FeignException.Forbidden e) {
-                throw new GithubClientException(ExceptionInfo.LIMIT_EXCEEDED);
+                throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
             }
             ghBody = ghResponse.getBody().getItems();
             ghHeaders = ghResponse.getHeaders();
@@ -63,9 +63,9 @@ public class RepoService {
                 try {
                     ghResponse = feignClient.getBranches(repo.getOwner().getLogin(), repo.getName(), PER_PAGE, page++);
                 } catch (FeignException.NotFound e) {
-                    throw new GithubClientException(ExceptionInfo.USER_OR_REPO_NOT_FOUND, repo.getOwner().getLogin(), repo.getName());
+                    throw new GitHubClientException(ExceptionInfoTemplate.USER_OR_REPO_NOT_FOUND, repo.getOwner().getLogin(), repo.getName());
                 } catch (FeignException.Forbidden e) {
-                    throw new GithubClientException(ExceptionInfo.LIMIT_EXCEEDED);
+                    throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
                 }
                 ghBody = ghResponse.getBody();
                 ghHeaders = ghResponse.getHeaders();

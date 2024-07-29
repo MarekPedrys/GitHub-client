@@ -7,19 +7,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.marekpedrys.githubclient.api.models.RepoResponse;
-import pl.marekpedrys.githubclient.services.RepoService;
+import pl.marekpedrys.githubclient.services.GitHubRepoService;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("repos")
-public class RepoController {
-    private final RepoService repoService;
+public class GitHubRepoController {
+    private final GitHubRepoService gitHubRepoService;
 
     @GetMapping
     public ResponseEntity<List<RepoResponse>> listRepos(@RequestParam String username) {
-        return ResponseEntity.ok(repoService.getRepos(username));
+        return ResponseEntity.ok(gitHubRepoService.getRepos(username));
     }
 
 }

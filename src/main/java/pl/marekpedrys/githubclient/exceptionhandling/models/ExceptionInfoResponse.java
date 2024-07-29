@@ -1,4 +1,4 @@
-package pl.marekpedrys.githubclient.api.exceptionhandling;
+package pl.marekpedrys.githubclient.exceptionhandling.models;
 
 import org.springframework.http.HttpStatus;
 
