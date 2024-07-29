@@ -28,4 +28,4 @@ Project is created with:
 Java 21 is required. To run this project, you can install `maven` and then navigate to the root of the project via command line 
 and execute the command `mvn spring-boot:run`. You can also use an IDE (e.g. Intellij). 
 
-Then use the endpoint ```GET http://localhost:8080/repos?username=``` (fill parameter value).
+Then use the endpoint ```GET http://localhost:8080/repos?username=``` (fill in the parameter value).
