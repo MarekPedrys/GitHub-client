@@ -14,6 +14,7 @@ import pl.marekpedrys.githubclient.httpClients.models.Repo;
 import pl.marekpedrys.githubclient.httpClients.models.SearchReposGitHubResponse;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -28,6 +29,7 @@ public class GitHubRepoService {
         addReposBranchesInfo(userRepos);
         return userRepos.stream()
                 .map(RepoResponse::of)
+                .sorted(Comparator.comparing(RepoResponse::getRepositoryName))
                 .toList();
     }
 
