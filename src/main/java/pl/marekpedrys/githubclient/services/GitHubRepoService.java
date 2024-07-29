@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import pl.marekpedrys.githubclient.exceptionhandling.models.ExceptionInfoTemplate;
-import pl.marekpedrys.githubclient.exceptionhandling.exceptions.GitHubClientException;
 import pl.marekpedrys.githubclient.api.models.RepoResponse;
+import pl.marekpedrys.githubclient.exceptionhandling.exceptions.GitHubClientException;
+import pl.marekpedrys.githubclient.exceptionhandling.models.ExceptionInfoTemplate;
 import pl.marekpedrys.githubclient.httpClients.feignclients.GitHubFeignClient;
 import pl.marekpedrys.githubclient.httpClients.models.Branch;
 import pl.marekpedrys.githubclient.httpClients.models.Repo;
@@ -29,7 +29,7 @@ public class GitHubRepoService {
         addReposBranchesInfo(userRepos);
         return userRepos.stream()
                 .map(RepoResponse::of)
-                .sorted(Comparator.comparing(RepoResponse::getRepositoryName))
+                .sorted(Comparator.comparing(r -> r.getRepositoryName().toLowerCase()))
                 .toList();
     }
 

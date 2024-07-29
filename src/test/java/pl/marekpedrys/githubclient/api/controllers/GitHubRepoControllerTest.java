@@ -54,7 +54,7 @@ class GitHubRepoControllerTest {
         Owner owner = new Owner("testUserLogin");
         Repo repo1 = new Repo("Repo_Z_notFork", false, owner, null);
         Repo repo2 = new Repo("Repo_A_Fork", true, owner, null);
-        Repo repo3 = new Repo("Repo_B_notFork", false, owner, null);
+        Repo repo3 = new Repo("Repo_b_notFork", false, owner, null);
         SearchReposGitHubResponse ghReposResponse = new SearchReposGitHubResponse(List.of(repo1, repo2, repo3));
         ResponseEntity<SearchReposGitHubResponse> ghReposResponseEntity = ResponseEntity.status(HttpStatus.OK).body(ghReposResponse);
 
@@ -71,7 +71,7 @@ class GitHubRepoControllerTest {
         Mockito.doReturn(ghBranchesResponseEntity2).when(feignClient).getBranches(owner.getLogin(), repo2.getName(), PER_PAGE, 1);
         Mockito.doReturn(ghBranchesResponseEntity3).when(feignClient).getBranches(owner.getLogin(), repo3.getName(), PER_PAGE, 1);
 
-        String expectedJson = "[{\"repositoryName\":\"Repo_B_notFork\",\"ownerLogin\":\"testUserLogin\",\"branches\":[{\"name\":\"Repo3_Branch1\",\"lastCommitSha\":\"Repo3_Branch1_sha\"},{\"name\":\"Repo3_Branch2\",\"lastCommitSha\":\"Repo3_Branch2_sha\"}]},{\"repositoryName\":\"Repo_Z_notFork\",\"ownerLogin\":\"testUserLogin\",\"branches\":[{\"name\":\"Repo1_Branch1\",\"lastCommitSha\":\"Repo1_Branch1_sha\"}]}]";
+        String expectedJson = "[{\"repositoryName\":\"Repo_b_notFork\",\"ownerLogin\":\"testUserLogin\",\"branches\":[{\"name\":\"Repo3_Branch1\",\"lastCommitSha\":\"Repo3_Branch1_sha\"},{\"name\":\"Repo3_Branch2\",\"lastCommitSha\":\"Repo3_Branch2_sha\"}]},{\"repositoryName\":\"Repo_Z_notFork\",\"ownerLogin\":\"testUserLogin\",\"branches\":[{\"name\":\"Repo1_Branch1\",\"lastCommitSha\":\"Repo1_Branch1_sha\"}]}]";
 
         //when-then
         MvcResult mvcResult = mockMvc.perform(get("/repos").param("username", owner.getLogin()))
