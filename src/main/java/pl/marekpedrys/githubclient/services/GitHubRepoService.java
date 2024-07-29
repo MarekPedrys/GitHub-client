@@ -40,10 +40,12 @@ public class GitHubRepoService {
         do {
             try {
                 ghResponse = feignClient.getRepos(username, PER_PAGE, page++);
-            } catch (FeignException.NotFound e) {
+            } catch (FeignException.UnprocessableEntity e) {
                 throw new GitHubClientException(ExceptionInfoTemplate.USER_NOT_FOUND, username);
             } catch (FeignException.Forbidden e) {
                 throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
+            } catch (FeignException.ServiceUnavailable e) {
+                throw new GitHubClientException(ExceptionInfoTemplate.GITHUB_API_UNAVAILABLE);
             }
             ghBody = ghResponse.getBody().getItems();
             ghHeaders = ghResponse.getHeaders();
