@@ -2,7 +2,6 @@ package pl.marekpedrys.githubclient.services;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.marekpedrys.githubclient.api.models.RepoResponse;
@@ -37,52 +36,35 @@ public class GitHubRepoService {
         List<Repo> userRepos = new ArrayList<>();
         ResponseEntity<SearchReposGitHubResponse> ghResponse;
         List<Repo> ghBody;
-        HttpHeaders ghHeaders;
-        int page = 1;
-        do {
-            try {
-                ghResponse = feignClient.getRepos(username, PER_PAGE, page++);
-            } catch (FeignException.UnprocessableEntity e) {
-                throw new GitHubClientException(ExceptionInfoTemplate.USER_NOT_FOUND, username);
-            } catch (FeignException.Forbidden e) {
-                throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
-            } catch (FeignException.ServiceUnavailable e) {
-                throw new GitHubClientException(ExceptionInfoTemplate.GITHUB_API_UNAVAILABLE);
-            }
-            ghBody = ghResponse.getBody().getItems();
-            ghHeaders = ghResponse.getHeaders();
-            userRepos.addAll(ghBody);
-        } while (linkToNextPageExists(ghHeaders));
+        try {
+            ghResponse = feignClient.getRepos(username, PER_PAGE);
+        } catch (FeignException.UnprocessableEntity e) {
+            throw new GitHubClientException(ExceptionInfoTemplate.USER_NOT_FOUND, username);
+        } catch (FeignException.Forbidden e) {
+            throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
+        } catch (FeignException.ServiceUnavailable e) {
+            throw new GitHubClientException(ExceptionInfoTemplate.GITHUB_API_UNAVAILABLE);
+        }
+        ghBody = ghResponse.getBody().getItems();
+        userRepos.addAll(ghBody);
         return userRepos;
     }
 
     private void addReposBranchesInfo(List<Repo> repos) {
         ResponseEntity<List<Branch>> ghResponse;
         List<Branch> ghBody;
-        HttpHeaders ghHeaders;
         for (Repo repo : repos) {
             repo.setBranches(new ArrayList<>());
-            int page = 1;
-            do {
-                try {
-                    ghResponse = feignClient.getBranches(repo.getOwner().getLogin(), repo.getName(), PER_PAGE, page++);
-                } catch (FeignException.NotFound e) {
-                    throw new GitHubClientException(ExceptionInfoTemplate.USER_OR_REPO_NOT_FOUND, repo.getOwner().getLogin(), repo.getName());
-                } catch (FeignException.Forbidden e) {
-                    throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
-                }
-                ghBody = ghResponse.getBody();
-                ghHeaders = ghResponse.getHeaders();
-                repo.getBranches().addAll(ghBody);
-            } while (linkToNextPageExists(ghHeaders));
+            try {
+                ghResponse = feignClient.getBranches(repo.getOwner().getLogin(), repo.getName(), PER_PAGE);
+            } catch (FeignException.NotFound e) {
+                throw new GitHubClientException(ExceptionInfoTemplate.USER_OR_REPO_NOT_FOUND, repo.getOwner().getLogin(), repo.getName());
+            } catch (FeignException.Forbidden e) {
+                throw new GitHubClientException(ExceptionInfoTemplate.LIMIT_EXCEEDED);
+            }
+            ghBody = ghResponse.getBody();
+            repo.getBranches().addAll(ghBody);
         }
-    }
-
-    private boolean linkToNextPageExists(HttpHeaders ghHeaders) {
-        List<String> links = ghHeaders.getOrEmpty("Link");
-        return !links.isEmpty() &&
-                links.get(0) != null &&
-                links.get(0).contains("rel=\"next\"");
     }
 
 }

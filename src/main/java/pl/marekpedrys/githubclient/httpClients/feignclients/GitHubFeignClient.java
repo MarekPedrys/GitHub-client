@@ -16,13 +16,11 @@ public interface GitHubFeignClient {
     //TODO consider "NOT is:fork"
     @RequestMapping(method = RequestMethod.GET, value = "/search/repositories?q=user:{username}")
     ResponseEntity<SearchReposGitHubResponse> getRepos(@PathVariable String username,
-                                                       @RequestParam int per_page,
-                                                       @RequestParam int page);
+                                                       @RequestParam int per_page);
 
     @RequestMapping(method = RequestMethod.GET, value = "/repos/{owner}/{repo}/branches")
     ResponseEntity<List<Branch>> getBranches(@PathVariable String owner,
                                              @PathVariable String repo,
-                                             @RequestParam int per_page,
-                                             @RequestParam int page);
+                                             @RequestParam int per_page);
 
 }
