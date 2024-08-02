@@ -17,4 +17,11 @@ public class Repo {
     private boolean fork;
     private Owner owner;
     private List<Branch> branches = new ArrayList<>();
+
+    public Repo(Repo repo, List<Branch> branches) {
+        this.name = repo.name;
+        this.fork = repo.fork;
+        this.owner = repo.owner;
+        this.branches = branches;
+    }
 }
